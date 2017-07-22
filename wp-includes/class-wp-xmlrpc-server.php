@@ -16,9 +16,9 @@
  * As of WordPress 3.5.0, XML-RPC is enabled by default. It can be disabled
  * via the {@see 'xmlrpc_enabled'} filter found in wp_xmlrpc_server::login().
  *
- * @package WordPress
- * @subpackage Publishing
  * @since 1.5.0
+ *
+ * @see IXR_Server
  */
 class wp_xmlrpc_server extends IXR_Server {
 	/**
@@ -408,7 +408,7 @@ class wp_xmlrpc_server extends IXR_Server {
 	 *
 	 * @since 4.9.0
 	 *
-	 * @param int $post_id Post ID.
+	 * @param int $term_id Term ID.
 	 * @return array Array of custom fields, if they exist.
 	 */
 	public function get_term_custom_fields( $term_id ) {
@@ -437,7 +437,7 @@ class wp_xmlrpc_server extends IXR_Server {
 	 *
 	 * @since 4.9.0
 	 *
-	 * @param int $post_id Post ID.
+	 * @param int $term_id Term ID.
 	 * @param array $fields Custom fields.
 	 */
 	public function set_term_custom_fields( $term_id, $fields ) {

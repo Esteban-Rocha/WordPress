@@ -10,8 +10,6 @@
  * The custom header image class.
  *
  * @since 2.1.0
- * @package WordPress
- * @subpackage Administration
  */
 class Custom_Image_Header {
 
@@ -20,6 +18,7 @@ class Custom_Image_Header {
 	 *
 	 * @var callable
 	 * @since 2.1.0
+	 * @access public
 	 */
 	public $admin_header_callback;
 
@@ -28,6 +27,7 @@ class Custom_Image_Header {
 	 *
 	 * @var callable
 	 * @since 3.0.0
+	 * @access public
 	 */
 	public $admin_image_div_callback;
 
@@ -36,7 +36,7 @@ class Custom_Image_Header {
 	 *
 	 * @var array
 	 * @since 3.0.0
-	 * @access private
+	 * @access public
 	 */
 	public $default_headers = array();
 
@@ -1321,7 +1321,12 @@ wp_nonce_field( 'custom-header-options', '_wpnonce-custom-header-options' ); ?>
 	 * @param WP_Customize_Manager $wp_customize Customize manager.
 	 */
 	public function customize_set_last_used( $wp_customize ) {
-		$data = $wp_customize->get_setting( 'header_image_data' )->post_value();
+
+		$header_image_data_setting = $wp_customize->get_setting( 'header_image_data' );
+		if ( ! $header_image_data_setting ) {
+			return;
+		}
+		$data = $header_image_data_setting->post_value();
 
 		if ( ! isset( $data['attachment_id'] ) ) {
 			return;

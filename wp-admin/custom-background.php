@@ -10,8 +10,6 @@
  * The custom background class.
  *
  * @since 3.0.0
- * @package WordPress
- * @subpackage Administration
  */
 class Custom_Background {
 
@@ -20,6 +18,7 @@ class Custom_Background {
 	 *
 	 * @var callable
 	 * @since 3.0.0
+	 * @access public
 	 */
 	public $admin_header_callback;
 
@@ -28,6 +27,7 @@ class Custom_Background {
 	 *
 	 * @var callable
 	 * @since 3.0.0
+	 * @access public
 	 */
 	public $admin_image_div_callback;
 

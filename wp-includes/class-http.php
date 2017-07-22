@@ -114,7 +114,7 @@ class WP_Http {
 	 *     @type string       $httpversion         Version of the HTTP protocol to use. Accepts '1.0' and '1.1'.
 	 *                                             Default '1.0'.
 	 *     @type string       $user-agent          User-agent value sent.
-	 *                                             Default WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ).
+	 *                                             Default 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ).
 	 *     @type bool         $reject_unsafe_urls  Whether to pass URLs through wp_http_validate_url().
 	 *                                             Default false.
 	 *     @type bool         $blocking            Whether the calling code requires the result of the request.
@@ -731,7 +731,7 @@ class WP_Http {
 	 * Edits the array by reference.
 	 *
 	 * @access public
-	 * @version 2.8.0
+	 * @since 2.8.0
 	 * @static
 	 *
 	 * @param array $r Full array of args passed into ::request()
@@ -811,6 +811,7 @@ class WP_Http {
 	 * are supported, eg *.wordpress.org will allow for all subdomains of wordpress.org to be contacted.
 	 *
 	 * @since 2.8.0
+	 * @access public
 	 * @link https://core.trac.wordpress.org/ticket/8927 Allow preventing external requests.
 	 * @link https://core.trac.wordpress.org/ticket/14636 Allow wildcard domains in WP_ACCESSIBLE_HOSTS
 	 *
@@ -962,7 +963,7 @@ class WP_Http {
 	 * Handles HTTP Redirects and follows them if appropriate.
 	 *
 	 * @since 3.7.0
-	 *
+	 * @access public
 	 * @static
 	 *
 	 * @param string $url The URL which was requested.
@@ -1019,6 +1020,7 @@ class WP_Http {
 	 * @link http://home.deds.nl/~aeron/regex/ for IPv6 regex
 	 *
 	 * @since 3.7.0
+	 * @access public
 	 * @static
 	 *
 	 * @param string $maybe_ip A suspected IP address
