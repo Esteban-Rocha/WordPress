@@ -66,16 +66,21 @@ if ( $action ) {
 				if ( false === $user_id ) {
 		 			$update = 'err_new_dup';
 				} else {
-					add_user_to_blog( $id, $user_id, $_POST['new_role'] );
-					$update = 'newuser';
-					/**
-					  * Fires after a user has been created via the network site-users.php page.
-					  *
-					  * @since 4.4.0
-					  *
-					  * @param int $user_id ID of the newly created user.
-					  */
-					do_action( 'network_site_users_created_user', $user_id );
+					$result = add_user_to_blog( $id, $user_id, $_POST['new_role'] );
+
+					if ( is_wp_error( $result ) ) {
+						$update = 'err_add_fail';
+					} else {
+						$update = 'newuser';
+						/**
+						  * Fires after a user has been created via the network site-users.php page.
+						  *
+						  * @since 4.4.0
+						  *
+						  * @param int $user_id ID of the newly created user.
+						  */
+						do_action( 'network_site_users_created_user', $user_id );
+					}
 				}
 			}
 			break;
@@ -87,10 +92,15 @@ if ( $action ) {
 				$newuser = $_POST['newuser'];
 				$user = get_user_by( 'login', $newuser );
 				if ( $user && $user->exists() ) {
-					if ( ! is_user_member_of_blog( $user->ID, $id ) )
-						add_user_to_blog( $id, $user->ID, $_POST['new_role'] );
-					else
+					if ( ! is_user_member_of_blog( $user->ID, $id ) ) {
+						$result = add_user_to_blog( $id, $user->ID, $_POST['new_role'] );
+
+						if ( is_wp_error( $result ) ) {
+							$update = 'err_add_fail';
+						}
+					} else {
 						$update = 'err_add_member';
+					}
 				} else {
 					$update = 'err_add_notfound';
 				}
@@ -223,6 +233,9 @@ if ( isset($_GET['update']) ) :
 	case 'err_add_member':
 		echo '<div id="message" class="error notice is-dismissible"><p>' . __( 'User is already a member of this site.' ) . '</p></div>';
 		break;
+	case 'err_add_fail':
+		echo '<div id="message" class="error notice is-dismissible"><p>' . __( 'User could not be added to this site.' ) . '</p></div>';
+		break;
 	case 'err_add_notfound':
 		echo '<div id="message" class="error notice is-dismissible"><p>' . __( 'Enter the username of an existing user.' ) . '</p></div>';
 		break;
@@ -285,7 +298,11 @@ if ( current_user_can( 'promote_users' ) && apply_filters( 'show_network_site_us
 		<tr>
 			<th scope="row"><label for="new_role_adduser"><?php _e( 'Role' ); ?></label></th>
 			<td><select name="new_role" id="new_role_adduser">
-			<?php wp_dropdown_roles( get_option( 'default_role' ) ); ?>
+			<?php
+			switch_to_blog( $id );
+			wp_dropdown_roles( get_option( 'default_role' ) );
+			restore_current_blog();
+			?>
 			</select></td>
 		</tr>
 	</table>
@@ -318,7 +335,11 @@ if ( current_user_can( 'create_users' ) && apply_filters( 'show_network_site_use
 		<tr>
 			<th scope="row"><label for="new_role_newuser"><?php _e( 'Role' ); ?></label></th>
 			<td><select name="new_role" id="new_role_newuser">
-			<?php wp_dropdown_roles( get_option( 'default_role' ) ); ?>
+			<?php
+			switch_to_blog( $id );
+			wp_dropdown_roles( get_option( 'default_role' ) );
+			restore_current_blog();
+			?>
 			</select></td>
 		</tr>
 		<tr class="form-field">
