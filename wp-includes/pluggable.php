@@ -1189,11 +1189,12 @@ if ( ! function_exists( 'wp_redirect' ) ) :
 	 *
 	 * @global bool $is_IIS
 	 *
-	 * @param string $location The path or URL to redirect to.
-	 * @param int    $status   Optional. HTTP response status code to use. Default '302' (Moved Temporarily).
+	 * @param string $location      The path or URL to redirect to.
+	 * @param int    $status        Optional. HTTP response status code to use. Default '302' (Moved Temporarily).
+	 * @param string $x_redirect_by Optional. The application doing the redirect. Default 'WordPress'.
 	 * @return bool False if the redirect was cancelled, true otherwise.
 	 */
-	function wp_redirect( $location, $status = 302 ) {
+	function wp_redirect( $location, $status = 302, $x_redirect_by = 'WordPress' ) {
 		global $is_IIS;
 
 		/**
@@ -1224,6 +1225,22 @@ if ( ! function_exists( 'wp_redirect' ) ) :
 
 		if ( ! $is_IIS && PHP_SAPI != 'cgi-fcgi' ) {
 			status_header( $status ); // This causes problems on IIS and some FastCGI setups
+		}
+
+		/**
+		 * Filters the X-Redirect-By header.
+		 *
+		 * Allows applications to identify themselves when they're doing a redirect.
+		 *
+		 * @since 5.0.0
+		 *
+		 * @param string $x_redirect_by The application doing the redirect.
+		 * @param int    $status        Status code to use.
+		 * @param string $location      The path to redirect to.
+		 */
+		$x_redirect_by = apply_filters( 'x_redirect_by', $x_redirect_by, $status, $location );
+		if ( is_string( $x_redirect_by ) ) {
+			header( "X-Redirect-By: $x_redirect_by" );
 		}
 
 		header( "Location: $location", true, $status );
@@ -2358,7 +2375,7 @@ if ( ! function_exists( 'wp_rand' ) ) :
 	 *
 	 * @global string $rnd_value
 	 * @staticvar string $seed
-	 * @staticvar bool $external_rand_source_available
+	 * @staticvar bool $use_random_int_functionality
 	 *
 	 * @param int $min Lower limit for the generated number
 	 * @param int $max Upper limit for the generated number
